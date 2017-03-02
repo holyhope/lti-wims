@@ -1,0 +1,12 @@
+<html>
+<head>
+	<link src="{{ css_url }}"/>
+</head>
+<body>
+<form action="?page=resolve-resource" method="post">
+	{{{ resource }}}
+	<input type="hidden" value="{{ return_url }}" name="return_url"/>
+	<input type="submit"/>
+</form>
+</body>
+</html>
