@@ -1,5 +1,10 @@
 <?php
-namespace LTI;
+namespace LTI\Requests;
+
+use LTI\Registration;
+use LTI\ToolConsumerProfile;
+
+use LTI\DatabaseSession;
 
 
 class ToolProxyRegistrationRequest extends PostRequest {

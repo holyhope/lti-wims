@@ -1,6 +1,5 @@
 <?php
-namespace LTI;
-
+namespace LTI\Requests;
 
 class ProfileRequest extends Request {
 	const page = 'profile';

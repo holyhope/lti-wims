@@ -1,8 +1,8 @@
 <?php
+namespace LTI\Requests;
 
-namespace LTI;
-
-require_once 'Request.php';
+use LTI\User;
+use LTI\Router;
 
 class ResolveResourceRequest extends Request {
 	const page = 'resolve-resource';

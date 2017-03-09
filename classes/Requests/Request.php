@@ -1,6 +1,5 @@
 <?php
-
-namespace LTI;
+namespace LTI\Requests;
 
 const LTI_TYPE_BASIC_LAUNCH      = 'basic-lti-launch-request';
 const LTI_TYPE_TOOL_REGISTRATION = 'ToolProxyRegistrationRequest';

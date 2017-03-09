@@ -1,5 +1,5 @@
 <?php
-namespace LTI;
+namespace LTI\Requests;
 
 
 abstract class PostRequest extends Request {

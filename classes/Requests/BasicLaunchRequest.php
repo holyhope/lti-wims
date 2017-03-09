@@ -1,6 +1,17 @@
 <?php
+namespace LTI\Requests;
 
-namespace LTI;
+use LTI\Question;
+use LTI\User;
+use LTI\LISPerson;
+use LTI\Context;
+use LTI\Custom;
+use LTI\ToolConsumer;
+use LTI\LaunchPresentation;
+use LTI\ResourceLink;
+
+use LTI\Router;
+use LTI\Oauth;
 
 require_once 'Request.php';
 
@@ -18,6 +29,8 @@ class BasicLaunchRequest extends PostRequest {
 	public $tool_consumer;
 	public $lis_person; //!< LIS Profil (Recommended)
 
+	public $question;
+
 	public $customs;
 
 	public function __construct( $get, $post ) {
@@ -31,18 +44,21 @@ class BasicLaunchRequest extends PostRequest {
 		$this->launch_presentation = new LaunchPresentation( $post );
 		$this->resource_link       = new ResourceLink( $post );
 		$this->roles               = explode( ',', $post['roles'] );
+
+		$this->question = Question::load( $this->customs['id'] );
 	}
 
 	public static function check_params( $get, $post ) {
 		parent::check_params( $get, $post );
 		$oauth = new Oauth( static::get_headers(), $get, $post );
 		$oauth->check();
+		assert( isset( $post[ Custom::prefix . 'id' ] ) );
 	}
 
 	public function handle() {
 		User::set_current( $this->user );
 
-		echo $this->render( $mustache );
+		echo $this->render();
 	}
 
 	public function support( $version ) {
@@ -58,7 +74,7 @@ class BasicLaunchRequest extends PostRequest {
 
 		$data = array(
 			'return_url' => $this->launch_presentation->return_url,
-			'resource'   => $this->resource_link->render(),
+			'resource'   => $this->question->render(),
 		);
 
 		if ( isset( $this->launch_presentation->css_url ) ) {
