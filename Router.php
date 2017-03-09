@@ -3,6 +3,9 @@
 namespace LTI;
 
 class Router {
+	/**
+	 * @var DatabaseSession $db - Database connector
+	 */
 	public static $db;
 	public static $template;
 
@@ -57,16 +60,21 @@ class Router {
 		require_once 'config.php';
 
 		spl_autoload_register( function ( $class_name ) {
-			$class = explode( '\\', $class_name, 2 );
-			if ( $class[0] == 'LTI' ) {
-				@include_once implode( DIRECTORY_SEPARATOR, array( CLASS_PATH, "${class[1]}.php" ) );
+			$class = explode( '\\', $class_name );
+			$root  = array_shift( $class );
+			$path  = implode( DIRECTORY_SEPARATOR, $class );
+			if ( $root == 'LTI' ) {
+				@include_once implode( DIRECTORY_SEPARATOR, array(
+					CLASS_PATH,
+					"${path}.php",
+				) );
 			}
 		} );
 
-		$this->register_request( ProfileRequest::page, ProfileRequest::class );
-		$this->register_request( BasicLaunchRequest::page, BasicLaunchRequest::class );
-		$this->register_request( ResolveResourceRequest::page, ResolveResourceRequest::class );
-		$this->register_request( ToolProxyRegistrationRequest::page, ToolProxyRegistrationRequest::class );
+		$this->register_request( Requests\ProfileRequest::page, Requests\ProfileRequest::class );
+		$this->register_request( Requests\BasicLaunchRequest::page, Requests\BasicLaunchRequest::class );
+		$this->register_request( Requests\ResolveResourceRequest::page, Requests\ResolveResourceRequest::class );
+		$this->register_request( Requests\ToolProxyRegistrationRequest::page, Requests\ToolProxyRegistrationRequest::class );
 
 		require implode( DIRECTORY_SEPARATOR, array(
 			ROOT_PATH,

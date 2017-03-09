@@ -1,6 +1,8 @@
 Wims LTI
 ========
 
+**/!\ Version *pre-alpha***
+
 This project bring [LTI protocol](http://www.imsglobal.org/specs/ltiv2p0/implementation-guide) support to [Wims](https://sourcesup.renater.fr/projects/wimsdev/).
 The main goal of this application is that Wims will be able to interact with [Moodle](http://moodle.org).
 
