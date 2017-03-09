@@ -7,12 +7,12 @@ class User extends LTIStorableObject {
 	const prefix     = 'user_';
 
 	public static function get_current(): User {
-		return static::load( Router::$db, $_SESSION['current_user'] );
+		return static::load( $_SESSION['current_user'] );
 	}
 
 	public static function set_current( User $user ) {
 		try {
-			$user->values['id'] = $user->insert( Router::$db );
+			$user->values['id'] = $user->insert();
 		} catch ( \Exception $e ) {
 			// Already stored in the database.
 		}
