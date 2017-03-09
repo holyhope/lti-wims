@@ -1,7 +1,7 @@
 <?php
 namespace LTI;
 
-abstract class LTIStorableObject extends LTIObject {
+abstract class LTIStorableObject extends LTIObject implements Storable {
 	const table_name = null;
 
 	public $values = array();
@@ -12,7 +12,8 @@ abstract class LTIStorableObject extends LTIObject {
 		}, array_keys( $values ) ), $values );
 	}
 
-	public function insert( $db ) {
+	public function insert() {
+		$db         = Router::$db;
 		$values     = $this->map_values( $this->values );
 		$keys       = implode( ',', array_keys( $values ) );
 		$table_name = $db->prefix . static::table_name;
@@ -26,7 +27,8 @@ SQL
 		}
 	}
 
-	public static function load( $db, $id ) {
+	public static function load( $id ) {
+		$db         = Router::$db;
 		$table_name = $db->prefix . static::table_name;
 
 		$sth = $db->connexion->prepare( <<<SQL
