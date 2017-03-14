@@ -59,11 +59,18 @@ class Oauth extends LTIObject {
 			throw new \Exception( "Invalid oauth version" );
 		}
 
-		$expected = \OAuthSignature::build_signature( $this->signature_method, $this->get_signature_base_string(), $this->consumer_key, 'p9R!rwR$' )->signature;
+		$filter   = array( 'name' => $this->consumer_key );
+		$secret   = ToolConsumer::search( $filter )->secret;
+		$expected = \OAuthSignature::build_signature(
+			$this->signature_method,
+			$this->get_signature_base_string(),
+			$this->consumer_key,
+			$secret
+		)->signature;
 
 		if ( $expected != $this->signature ) {
 			error_log( 'OAuth signature seems broken' );
-			// throw new \Exception( "Invalid oauth signature expected $expected got " . $this->signature );
+			// throw new \OAuthException( "Invalid oauth signature expected $expected got " . $this->signature );
 		}
 	}
 

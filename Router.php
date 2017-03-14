@@ -56,27 +56,30 @@ class Router {
 		session_commit();
 	}
 
+	public function autoload( $class_name ) {
+		$class = explode( '\\', $class_name );
+		$root  = array_shift( $class );
+		$path  = implode( DIRECTORY_SEPARATOR, $class );
+		if ( $root == 'LTI' ) {
+			$path = implode( DIRECTORY_SEPARATOR, array(
+				CLASS_PATH,
+				"${path}.php",
+			) );
+			include_once $path;
+		}
+	}
+
 	public function setup( $options = array() ) {
 		require_once 'config.php';
 
-		spl_autoload_register( function ( $class_name ) {
-			$class = explode( '\\', $class_name );
-			$root  = array_shift( $class );
-			$path  = implode( DIRECTORY_SEPARATOR, $class );
-			if ( $root == 'LTI' ) {
-				@include_once implode( DIRECTORY_SEPARATOR, array(
-					CLASS_PATH,
-					"${path}.php",
-				) );
-			}
-		} );
+		spl_autoload_register( array( $this, 'autoload' ) );
 
 		$this->register_request( Requests\ProfileRequest::page, Requests\ProfileRequest::class );
 		$this->register_request( Requests\BasicLaunchRequest::page, Requests\BasicLaunchRequest::class );
 		$this->register_request( Requests\ResolveResourceRequest::page, Requests\ResolveResourceRequest::class );
 		$this->register_request( Requests\ToolProxyRegistrationRequest::page, Requests\ToolProxyRegistrationRequest::class );
 
-		require implode( DIRECTORY_SEPARATOR, array(
+		$mustache_path = implode( DIRECTORY_SEPARATOR, array(
 			ROOT_PATH,
 			'vendor',
 			'mustache',
@@ -85,6 +88,7 @@ class Router {
 			'Mustache',
 			'Autoloader.php',
 		) );
+		require $mustache_path;
 		\Mustache_Autoloader::register();
 	}
 
@@ -114,14 +118,14 @@ class Router {
 		return $post[ Version::label ];
 	}
 
-	private function handle_error( $e ) {
-		header( "HTTP/1.0 " . $e->getCode() );
+	private function handle_error( \Exception $e ) {
+		@header( "HTTP/1.0 " . $e->getCode() );
 		echo $e->getMessage();
 		die();
 	}
 
-	private function invalid_parameters( $e ) {
-		header( "HTTP/1.0 400" );
+	private function invalid_parameters( \Exception $e ) {
+		@header( "HTTP/1.0 400" );
 		echo $e->getMessage();
 		die();
 	}
