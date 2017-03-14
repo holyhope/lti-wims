@@ -27,16 +27,25 @@ SQL
 		}
 	}
 
-	public static function load( $id ) {
+	public static function search( $filters ): LTIStorableObject {
 		$db         = Router::$db;
 		$table_name = $db->prefix . static::table_name;
 
-		$sth = $db->connexion->prepare( <<<SQL
-SELECT * FROM $table_name WHERE id = :id
-SQL
-		);
+		$cond = array();
+		foreach ( $filters as $column => $filter ) {
+			$cond[] = "$column = :$column";
+		}
+		$filters = array_combine( array_map( function ( $column ) {
+			return ":$column";
+		}, array_keys( $filters ) ), $filters );
+		$cond    = implode( ' AND ', $cond );
+		$sql     = <<<SQL
+SELECT * FROM $table_name WHERE $cond
+SQL;
 
-		$sth->execute( array( ':id' => $id ) );
+		$sth = $db->connexion->prepare( $sql );
+
+		$sth->execute( $filters );
 
 		$result = $sth->fetch( \PDO::FETCH_ASSOC );
 
@@ -51,5 +60,9 @@ SQL
 		}
 
 		return new static( $data );
+	}
+
+	public static function load( $id ) {
+		return new static( static::search( array( 'id' => $id ) ) );
 	}
 }
