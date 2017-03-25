@@ -1,0 +1,21 @@
+language: php
+ php:
+  - '7.0'
+  - '7.1'
+  - nightly
+before_install:
+  - mysql -e 'CREATE DATABASE travis_lti_wims;'
+  - cat db/init.sql | mysql travis_lti_wims
+ install:
+  - sudo apt-get install apache2 libpcre3 libpcre3-dev
+  - pecl install oauth-2.0.2
+  - composer install
+script: phpunit -c phpunit.xml
+ before_script:
+  - sudo cp -f apache.conf /etc/apache2/sites-available/default.conf
+  - sudo sed -e "s?%ROOT_DIRECTORY%?$(pwd)?g" --in-place /etc/apache2/sites-available/default.conf
+  - sudo service apache2 restart
+  - sudo cp -f config-travis.php config.php
+  - sudo sed -e "s?%DATABASE%?travis_lti_wims?g" --in-place config.php
+ services:
+  - mysql
