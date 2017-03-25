@@ -58,18 +58,7 @@ class Router {
 
 	public function setup( $options = array() ) {
 		require_once 'config.php';
-
-		spl_autoload_register( function ( $class_name ) {
-			$class = explode( '\\', $class_name );
-			$root  = array_shift( $class );
-			$path  = implode( DIRECTORY_SEPARATOR, $class );
-			if ( $root == 'LTI' ) {
-				@include_once implode( DIRECTORY_SEPARATOR, array(
-					CLASS_PATH,
-					"${path}.php",
-				) );
-			}
-		} );
+		require_once 'autoloader.php';
 
 		$this->register_request( Requests\ProfileRequest::page, Requests\ProfileRequest::class );
 		$this->register_request( Requests\BasicLaunchRequest::page, Requests\BasicLaunchRequest::class );
