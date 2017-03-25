@@ -12,7 +12,6 @@ before_install:
   - composer install
 script: phpunit -c phpunit.xml
  before_script:
-  - phpenv config-add php.ini
   - sudo cp -f apache.conf /etc/apache2/sites-available/default.conf
   - sudo sed -e "s?%ROOT_DIRECTORY%?$(pwd)?g" --in-place /etc/apache2/sites-available/default.conf
   - sudo service apache2 restart
