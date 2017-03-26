@@ -19,3 +19,5 @@ script: phpunit -c phpunit.xml
   - sudo sed -e "s?%DATABASE%?travis_lti_wims?g" --in-place config.php
  services:
   - mysql
+notifications:
+  email: false
