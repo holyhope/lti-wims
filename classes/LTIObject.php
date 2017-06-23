@@ -4,8 +4,10 @@
 namespace LTI;
 
 
-abstract class LTIObject {
+abstract class LTIObject implements \Iterator {
 	const prefix = false;
+
+	public $values = array();
 
 	public function __construct( array $post ) {
 		$this->values = self::filter_values( static::prefix, $post );
@@ -15,7 +17,7 @@ abstract class LTIObject {
 		if ( ! $prefix ) {
 			return $post;
 		}
-		
+
 		$prefix_len = strlen( $prefix );
 		$values     = array();
 
@@ -34,5 +36,30 @@ abstract class LTIObject {
 		}
 
 		return $this->values[ $key ];
+	}
+
+	public function __set( $key, $value ) {
+		return $this->values[ $key ] = $value;
+	}
+
+
+	public function current() {
+		return current( $this->values );
+	}
+
+	public function next() {
+		return next( $this->values );
+	}
+
+	public function key() {
+		return key( $this->values );
+	}
+
+	public function valid() {
+		return false !== current( $this->values );
+	}
+
+	public function rewind() {
+		return reset( $this->values );
 	}
 }

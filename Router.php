@@ -7,6 +7,9 @@ class Router {
 	 * @var DatabaseSession $db - Database connector
 	 */
 	public static $db;
+	/**
+	 * @var \Mustache_Engine $template - Mustache template
+	 */
 	public static $template;
 
 	private $requests = array();
@@ -103,15 +106,27 @@ class Router {
 		return $post[ Version::label ];
 	}
 
+	/**
+	 * @param \Exception $e
+	 */
 	private function handle_error( $e ) {
 		header( "HTTP/1.0 " . $e->getCode() );
 		echo $e->getMessage();
+		echo '<pre>';
+		echo $e->getTraceAsString();
+		echo '</pre>';
 		die();
 	}
 
+	/**
+	 * @param \Exception $e
+	 */
 	private function invalid_parameters( $e ) {
 		header( "HTTP/1.0 400" );
 		echo $e->getMessage();
+		echo '<pre>';
+		echo $e->getTraceAsString();
+		echo '</pre>';
 		die();
 	}
 }

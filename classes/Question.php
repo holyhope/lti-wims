@@ -1,22 +1,33 @@
 <?php
 namespace LTI;
 
-class Question extends LTIObject implements Storable {
-	public static function load( $id ): Question {
-		//Load from source
-		return new static( array(
-			'id' => $id,
-		) );
+/**
+ * Class Question
+ *
+ * @property integer      id
+ * @property string       type
+ * @property ToolProvider tool_provider
+ */
+abstract class Question implements Storable {
+	private $values;
+
+	public function __construct( $data ) {
+		$this->values = $data;
 	}
 
-	public function render(): string {
-		$mustache = Router::$template;
-		$tpl      = $mustache->loadTemplate( 'question' );
+	public function __get( $key ) {
+		if ( ! isset( $this->values[ $key ] ) ) {
+			throw new \Exception( "$key not specified" );
+		}
 
-		return $tpl->render( array( 'id' => $this->id ) );
+		return $this->values[ $key ];
 	}
+
+	public abstract function render(): string;
 
 	public function insert() {
 		// TODO: Implement insert() method.
 	}
+
+	public abstract function get_mark(User $user);
 }

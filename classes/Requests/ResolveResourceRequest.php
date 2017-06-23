@@ -3,6 +3,7 @@ namespace LTI\Requests;
 
 use LTI\User;
 use LTI\Router;
+use LTI\WimsQuestion;
 
 class ResolveResourceRequest extends Request {
 	const page = 'resolve-resource';
@@ -20,12 +21,14 @@ class ResolveResourceRequest extends Request {
 	public  $customs;
 	private $mark;
 	private $max = 10;
+	private $question;
 
 	public function __construct( $get, $post ) {
 		parent::__construct( $get, $post );
 
 		$this->user       = User::get_current();
-		$this->mark       = rand( 0, $this->max );
+		$this->question   = WimsQuestion::load( $post['resource'] );
+		$this->mark       = $this->question->get_mark( $this->user );
 		$this->return_url = static::sanitize_returl_url( $post['return_url'] );
 	}
 

@@ -1,7 +1,7 @@
 <?php
 namespace LTI\Requests;
 
-use LTI\Question;
+use LTI\WimsQuestion;
 use LTI\User;
 use LTI\LISPerson;
 use LTI\Context;
@@ -36,8 +36,10 @@ class BasicLaunchRequest extends PostRequest {
 	public function __construct( $get, $post ) {
 		parent::__construct( $get, $post );
 
-		$this->user                = new User( $post );
-		$this->lis_person          = new LISPerson( $post );
+		$this->user = new User( $post );
+		foreach ( new LISPerson( $post ) as $item => $value ) {
+			$this->user->$item = $value;
+		}
 		$this->context             = new Context( $post );
 		$this->customs             = Custom::get_all( $post );
 		$this->tool_consumer       = new ToolConsumer( $post );
@@ -45,14 +47,14 @@ class BasicLaunchRequest extends PostRequest {
 		$this->resource_link       = new ResourceLink( $post );
 		$this->roles               = explode( ',', $post['roles'] );
 
-		$this->question = Question::load( $this->customs['id'] );
+		$this->question = WimsQuestion::load( $this->customs['id'] );
 	}
 
 	public static function check_params( $get, $post ) {
 		parent::check_params( $get, $post );
 		$oauth = new Oauth( static::get_headers(), $get, $post );
-		$oauth->check();
-		assert( isset( $post[ Custom::prefix . 'id' ] ) );
+		//$oauth->check();
+		//assert( isset( $post[ Custom::prefix . 'id' ] ) );
 	}
 
 	public function handle() {
@@ -73,8 +75,11 @@ class BasicLaunchRequest extends PostRequest {
 		$tpl      = $mustache->loadTemplate( 'basic-launch-' . $this->launch_presentation->document_target );
 
 		$data = array(
-			'return_url' => $this->launch_presentation->return_url,
-			'resource'   => $this->question->render(),
+			'return_url'  => $this->launch_presentation->return_url,
+			'resource'    => $this->question->render(),
+			'resource_id' => $this->question->id,
+			'title'       => $this->context->title . ' - ' . $this->resource_link->title,
+			'description' => $this->resource_link->description,
 		);
 
 		if ( isset( $this->launch_presentation->css_url ) ) {

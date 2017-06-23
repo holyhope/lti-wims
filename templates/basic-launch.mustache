@@ -4,9 +4,13 @@
 </head>
 <body>
 <form action="?page=resolve-resource" method="post">
-	{{{ resource }}}
+	<h1 style="float: left">{{ title }}</h1>
+	<input type="submit" value="I finished" style="float: right;"/>
+	<div class="container" style="clear: both">
+		{{{ resource }}}
+	</div>
+	<input type="hidden" name="resource" value="{{ resource_id }}"/>
 	<input type="hidden" value="{{ return_url }}" name="return_url"/>
-	<input type="submit"/>
 </form>
 </body>
 </html>

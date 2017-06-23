@@ -8,6 +8,7 @@ RUN    apt-get update \
 		unzip \
 		libpcre3 \
 		libpcre3-dev \
+		libzip-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& pecl install \
 		zip \

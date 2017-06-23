@@ -4,8 +4,6 @@ namespace LTI;
 abstract class LTIStorableObject extends LTIObject implements Storable {
 	const table_name = null;
 
-	public $values = array();
-
 	protected static function map_values( $values ) {
 		return array_combine( array_map( function ( $key ) {
 			return ":$key";
@@ -21,6 +19,7 @@ abstract class LTIStorableObject extends LTIObject implements Storable {
 INSERT INTO $table_name VALUES ($keys);
 SQL
 		);
+		print($req);
 
 		if ( ! $sth->execute( $values ) ) {
 			throw new \Exception( $sth->errorInfo()[2] );

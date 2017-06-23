@@ -24,7 +24,7 @@ class PresentationTarget {
 			self::OVERLAY,
 		) )
 		) {
-			throw new ErrorException( 'Invalid target presentation' );
+			throw new \ErrorException( 'Invalid target presentation' );
 		}
 		$this->value = $target;
 	}
@@ -50,7 +50,8 @@ class Presentation {
 		switch ( $this->presentation_target ) {
 			case PresentationTarget::IFRAME:
 				return include TEMPLATE_PATH . '/basic-launch.mustache';
-			case
+			default:
+				return "";
 		}
 	}
 }
