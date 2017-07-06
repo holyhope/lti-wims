@@ -1,7 +1,7 @@
 Wims LTI
 ========
 
-**/!\ Version *pre-alpha***
+**/!\ Version *alpha***
 
 This project bring [LTI protocol](http://www.imsglobal.org/specs/ltiv2p0/implementation-guide) support to [Wims](https://sourcesup.renater.fr/projects/wimsdev/).
 The main goal of this application is that Wims will be able to interact with [Moodle](http://moodle.org).
@@ -23,24 +23,101 @@ Installation
 This applicaton is dependant from Wims.
 It should be linked to a valid database, and the Wims instance should be active.
 
-### Normal
+First of all, please start Wims and a database.
+
+### Installation on a dedicated server
 
 Classic installation requires a dedicated web server. See below for more details.
 
 #### Requirements
 
-* Web Server : [Apache](https://httpd.apache.org) recommended
+* Web server : [Apache](https://httpd.apache.org) recommended
 * [PHP 7+](http://php.net) with [OAuth](https://secure.php.net/manual/en/book.oauth.php) and [PDO](https://secure.php.net/manual/en/book.pdo.php) extensions
 * [Composer](https://getcomposer.org/) (see `composer.json` to see dependencies)
 
-#### How to install ?
+#### How to install?
 
-1. Download the latest version
-2. Copy all files in `/var/www`
-3. Write `config.php`
-4. Write `/etc/apache2/site-available/wims-lti.conf`
-5. Activate site with `a2ensite wims-lti`
+1. Download the latest version to `/var/www`
+   ```bash
+   git clone https://github.com/holyhope/lti-wims.git /var/www
+   ```
+2. Populate the database wims `/var/www/db/install.sql`
+3. share wims folder with lti-wims
+   ```bash
+   ln -s /home/wims /var/wims
+   ```
+2. Write `/var/www/config.php`
+   ```php
+   <?php
+   namespace LTI;
+   
+   const ROOT_PATH     = __DIR__;
+   const TEMPLATE_PATH = ROOT_PATH . '/templates';
+   const CLASS_PATH    = ROOT_PATH . '/classes';
+   
+   const DB_NAME     = 'wims_lti';
+   const DB_USER     = 'lti';
+   const DB_PASSWORD = 'myPassword';
+   const DB_HOST     = '192.168.1.15';
+   const DB_PORT     = '3306';
+   const DB_DRIVER   = 'mysql';  // Should be one of PDO::getAvailableDrivers()
+   const DB_PREFIX   = '';       // The prefix of table
+   ```
 
-### Dockerized
+### Installation using docker
 
-This application come with a [dockerfile](https://docs.docker.com/engine/reference/builder/), feel free to change and build your own image.
+This application contains a dockerfile, feel free to change and build your own image.
+
+#### Requirements
+
+* [Docker](https://docs.docker.com/engine/reference/builder/)
+* Running wims server
+* Running database
+
+You can also use the wims and [postgres docker image](https://hub.docker.com/_/postgres/)
+
+```bash
+docker run -d -p 8080:80 -v /mnt/wims:/var/www wims
+docker run -d -p 5432:5432 -e POSTGRES_DB=wims_lti -e POSTGRES_USER=lti -e POSTGRES_PASSWORD=myPassword postgres
+```
+
+#### How to install?
+
+1. Download the latest version to `~/wims-lti`
+   ```bash
+   git clone https://github.com/holyhope/lti-wims.git /var/www
+   ```
+2. Populate the database wims `~/wims-lti/db/install.sql`
+   ```bash
+   psql -f ~/wims-lti/db/install.sql -U lti wims_lti
+   ```
+3. Write `~/wims-lti/config.php`
+   ```php
+   <?php
+   namespace LTI;
+   
+   const ROOT_PATH     = __DIR__;
+   const TEMPLATE_PATH = ROOT_PATH . '/templates';
+   const CLASS_PATH    = ROOT_PATH . '/classes';
+   
+   const DB_NAME     = 'wims_lti';
+   const DB_USER     = 'lti';
+   const DB_PASSWORD = 'myPassword';
+   const DB_HOST     = 'localhost';
+   const DB_PORT     = '5432';
+   const DB_DRIVER   = 'postgres';  // Should be one of PDO::getAvailableDrivers()
+   const DB_PREFIX   = '';       // The prefix of table
+   ```
+4. Build and run the docker image
+   ```bash
+   docker build -t lti-wims ~/wims-lti
+   docker run -d -v /mnt/wims:/var/wims -p 80:80 lti-wims
+   ```
+
+How to configure
+----------------
+
+### Moodle
+
+Add an external activity in your course with the server data.
+You do not need ann OAuth token, it is disabled ([Issue#3](https://github.com/holyhope/lti-wims/issues/3)).
