@@ -23,7 +23,7 @@ Installation
 This applicaton is dependant from Wims.
 It should be linked to a valid database, and the Wims instance should be active.
 
-First of all, please start Wims and a database.
+First of all, please start [Wims](https://sourcesup.renater.fr/projects/wimsdev/) and a database.
 
 ### Installation on a dedicated server
 
@@ -71,10 +71,8 @@ This application contains a dockerfile, feel free to change and build your own i
 #### Requirements
 
 * [Docker](https://docs.docker.com/engine/reference/builder/)
-* Running wims server
-* Running database
 
-You can also use the wims and [postgres docker image](https://hub.docker.com/_/postgres/)
+You can also use the [wims](https://github.com/afranke/wims) and [postgres](https://hub.docker.com/_/postgres/) docker image.
 
 ```bash
 docker run -d -p 8080:80 -v /mnt/wims:/var/www wims
