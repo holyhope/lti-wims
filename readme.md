@@ -103,7 +103,7 @@ docker run -d -p 5432:5432 -e POSTGRES_DB=wims_lti -e POSTGRES_USER=lti -e POSTG
    const DB_PASSWORD = 'myPassword';
    const DB_HOST     = 'localhost';
    const DB_PORT     = '5432';
-   const DB_DRIVER   = 'postgres';  // Should be one of PDO::getAvailableDrivers()
+   const DB_DRIVER   = 'pgsql';  // Should be one of PDO::getAvailableDrivers()
    const DB_PREFIX   = '';       // The prefix of table
    ```
 4. Build and run the docker image
