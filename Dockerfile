@@ -9,6 +9,7 @@ RUN    apt-get update \
 		libpcre3 \
 		libpcre3-dev \
 		libzip-dev \
+		libpq-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& pecl install \
 		zip \
@@ -18,6 +19,7 @@ RUN    apt-get update \
 	&& docker-php-ext-install \
 		pdo \
 		pdo_mysql \
+		pdo_pgsql \
 	&& curl https://getcomposer.org/installer | php \
 	&& mv composer.phar /usr/local/bin/composer \
 	&& composer install -n -d .. \
